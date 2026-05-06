@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>房地合一稅 2.0 試算</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">Taiwan House-Land Transaction Income Tax</p>
+          <h1>房地合一稅 2.0 試算</h1>
+          <p class="lede">
+            依成交價、成本、費用、土地漲價總數額與持有期間估算課稅所得、適用稅率與應納稅額。
+          </p>
+        </div>
+        <div class="notice">
+          本工具採常見個人境內居住者情境簡化試算，結果僅供決策前估算，正式申報仍請以國稅局認定與稅務專業意見為準。
+        </div>
+      </section>
+
+      <section class="workspace">
+        <form class="panel form-panel" id="tax-form">
+          <div class="section-heading">
+            <span>交易資料</span>
+            <button class="ghost-button" type="reset">清除</button>
+          </div>
+
+          <div class="field-grid two">
+            <label class="field">
+              <span>取得日期</span>
+              <input id="acquiredDate" type="date" value="2021-07-01" required />
+            </label>
+            <label class="field">
+              <span>交易日期</span>
+              <input id="soldDate" type="date" value="2026-05-06" required />
+            </label>
+          </div>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>成交總價</span>
+              <input id="salePrice" type="text" inputmode="numeric" value="18,000,000" data-money />
+            </label>
+            <label class="field">
+              <span>取得成本</span>
+              <input id="cost" type="text" inputmode="numeric" value="13,000,000" data-money />
+            </label>
+            <label class="field">
+              <span>土地漲價總數額</span>
+              <input id="landValueIncrement" type="text" inputmode="numeric" value="600,000" data-money />
+            </label>
+          </div>
+
+          <div class="section-heading compact">
+            <span>必要費用</span>
+          </div>
+          <div class="segmented" role="group" aria-label="必要費用輸入方式">
+            <label>
+              <input type="radio" name="expenseMode" value="manual" checked />
+              <span>自行輸入</span>
+            </label>
+            <label>
+              <input type="radio" name="expenseMode" value="estimate" />
+              <span>3% 估算</span>
+            </label>
+          </div>
+
+          <label class="field" id="expense-field">
+            <span>必要費用金額</span>
+            <input id="expenses" type="text" inputmode="numeric" value="420,000" data-money />
+          </label>
+
+          <div class="check-list">
+            <label class="check-row">
+              <input id="selfUse" type="checkbox" />
+              <span>符合自住房地優惠：設籍、持有並居住連續滿 6 年，且交易前 6 年無出租或營業使用</span>
+            </label>
+            <label class="check-row">
+              <input id="involuntary" type="checkbox" />
+              <span>符合非自願因素，適用 20% 稅率</span>
+            </label>
+          </div>
+
+          <details class="rebuy-module" open>
+            <summary>重購退稅試算</summary>
+            <div class="check-list">
+              <label class="check-row">
+                <input id="rebuyEnabled" type="checkbox" />
+                <span>買賣間隔 2 年內且皆為自住設籍</span>
+              </label>
+            </div>
+            <div class="field-grid two">
+              <label class="field">
+                <span>新購買入價</span>
+                <input id="newHomePrice" type="text" inputmode="numeric" value="20,000,000" data-money />
+              </label>
+              <label class="field">
+                <span>已繳稅額</span>
+                <input id="paidTax" type="text" inputmode="numeric" value="" placeholder="預設帶入本次應納稅額" data-money />
+              </label>
+            </div>
+          </details>
+        </form>
+
+        <aside class="panel result-panel" aria-live="polite">
+          <div class="result-topline">
+            <span>預估應納稅額</span>
+            <strong id="taxDue">NT$0</strong>
+          </div>
+
+          <div class="result-grid">
+            <div>
+              <span>課稅所得</span>
+              <strong id="taxableIncome">NT$0</strong>
+            </div>
+            <div>
+              <span>適用稅率</span>
+              <strong id="taxRate">0%</strong>
+            </div>
+            <div>
+              <span>持有期間</span>
+              <strong id="holdingPeriod">-</strong>
+            </div>
+            <div>
+              <span>必要費用</span>
+              <strong id="expenseUsed">NT$0</strong>
+            </div>
+          </div>
+
+          <div class="formula-box">
+            <span>計算式</span>
+            <p id="formulaText">請輸入交易資料。</p>
+          </div>
+
+          <div class="rebuy-result" id="rebuyResult" hidden>
+            <span>預估可退稅額</span>
+            <strong id="refundAmount">NT$0</strong>
+            <p id="refundNote"></p>
+          </div>
+
+          <div class="alerts" id="alerts"></div>
+
+          <div class="source-links">
+            <span>參考來源</span>
+            <a href="https://www.etax.nat.gov.tw/etwmain/alien-tax-service/alien-tax-faq/E9r2Pzl" target="_blank" rel="noreferrer">稅率級距</a>
+            <a href="https://www.etax.nat.gov.tw/etwmain/tax-info/understanding/tax-q-and-a/national/individual-income-tax/house-tax-and-land-tax-consolidation-question/zVYM8j0" target="_blank" rel="noreferrer">自住房地優惠</a>
+            <a href="https://www.etax.nat.gov.tw/etwmain/alien-tax-service/alien-tax-faq/05KVgzL" target="_blank" rel="noreferrer">申報期限</a>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
